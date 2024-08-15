@@ -1,4 +1,4 @@
-package com.amanefer.crm.model;
+package com.amanefer.crm.entities;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

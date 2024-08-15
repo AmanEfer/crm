@@ -1,4 +1,4 @@
-package com.amanefer.crm.model;
+package com.amanefer.crm.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
