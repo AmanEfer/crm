@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: crm
+  datasource:
+    url: jdbc:postgresql://localhost:5432/my_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: task_system
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        show_sql: true
+        format_sql: true
