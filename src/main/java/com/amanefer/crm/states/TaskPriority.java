@@ -1,4 +1,4 @@
-package com.amanefer.crm.entities;
+package com.amanefer.crm.states;
 
 public enum TaskPriority {
     HIGH,

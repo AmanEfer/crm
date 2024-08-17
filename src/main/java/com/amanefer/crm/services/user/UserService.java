@@ -2,17 +2,19 @@ package com.amanefer.crm.services.user;
 
 import com.amanefer.crm.entities.User;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface UserService {
 
-    Optional<User> getUserById(Long id);
+    List<User> getAllUsers();
 
-    Optional<User> getUserByEmail(String email);
+    User getUserById(Long id);
+
+    User getUserByEmail(String email);
 
     User createUser(User user);
 
-    User updateUser(User user);
+    User updateUser(Long id, User user);
 
     void deleteUser(Long id);
 }

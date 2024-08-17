@@ -1,5 +1,7 @@
 package com.amanefer.crm.entities;
 
+import com.amanefer.crm.states.TaskPriority;
+import com.amanefer.crm.states.TaskStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

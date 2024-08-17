@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TaskService {
 
-    Optional<Task> getTaskById(Long id);
+    Task getTaskById(Long id);
 
     List<Task> getTasksByAuthor(User author);
 

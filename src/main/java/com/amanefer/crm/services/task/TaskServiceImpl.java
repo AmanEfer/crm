@@ -2,13 +2,13 @@ package com.amanefer.crm.services.task;
 
 import com.amanefer.crm.entities.Task;
 import com.amanefer.crm.entities.User;
+import com.amanefer.crm.exceptions.TaskException;
 import com.amanefer.crm.repositories.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -18,8 +18,9 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
 
     @Override
-    public Optional<Task> getTaskById(Long id) {
-        return taskRepository.findById(id);
+    public Task getTaskById(Long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskException(String.format("Task with ID %d wasn't found", id)));
     }
 
     @Override
