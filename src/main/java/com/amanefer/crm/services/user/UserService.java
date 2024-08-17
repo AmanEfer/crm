@@ -1,20 +1,21 @@
 package com.amanefer.crm.services.user;
 
-import com.amanefer.crm.entities.User;
+import com.amanefer.crm.dto.user.UserRequestDto;
+import com.amanefer.crm.dto.user.UserResponseDto;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<User> getAllUsers();
+    List<UserResponseDto> getAllUsers();
 
-    User getUserById(Long id);
+    UserResponseDto getUserById(Long id);
 
-    User getUserByEmail(String email);
+    UserResponseDto getUserByEmail(String email);
 
-    User createUser(User user);
+    UserResponseDto createUser(UserRequestDto user);
 
-    User updateUser(Long id, User user);
+    UserResponseDto updateUser(Long id, UserRequestDto user);
 
     void deleteUser(Long id);
 }

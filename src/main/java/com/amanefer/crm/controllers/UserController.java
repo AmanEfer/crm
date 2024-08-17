@@ -1,5 +1,7 @@
 package com.amanefer.crm.controllers;
 
+import com.amanefer.crm.dto.user.UserRequestDto;
+import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.entities.User;
 import com.amanefer.crm.services.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,36 +24,37 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
+    private static final String DELETE_MESSAGE = "User with ID %s was successfully deleted";
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
-    }
-
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public UserResponseDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @GetMapping("/user")
-    public User getUserByEmail(@RequestParam String email) {
+    public UserResponseDto getUserByEmail(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
 
+    @PostMapping
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto user) {
+        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+    }
+
     @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UserRequestDto user) {
         return new ResponseEntity<>(userService.updateUser(id, user), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(String.format(DELETE_MESSAGE, id), HttpStatus.OK);
     }
 }
