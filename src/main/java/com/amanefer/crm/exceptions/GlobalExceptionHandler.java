@@ -14,8 +14,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({UserException.class, TaskException.class})
-    public ResponseEntity<String> resourceNotFoundExceptionHandler(UserException ex) {
+    @ExceptionHandler({UserNotFoundException.class, TaskNotFoundException.class})
+    public ResponseEntity<String> handleUserAndTaskNotFoundException(UserNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

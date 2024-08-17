@@ -8,11 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -23,25 +23,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Name can't be null")
+    @NotBlank(message = "Name can't be empty or null")
     @Size(min = 2, max = 20, message = "Name should contain from 3 to 20 symbols")
     @Column(nullable = false)
     private String name;
 
-    @NotNull(message = "Password can't be null")
+    @NotBlank(message = "Password can't be empty or null")
     @Size(min = 2, max = 20, message = "Password should contain from 3 to 20 symbols")
     @Column(nullable = false)
     private String password;
 
-    @NotNull(message = "Email can't be null")
+    @NotBlank(message = "Email can't be empty or null")
     @Email(message = "Enter the correct email")
     @Size(min = 2, max = 20, message = "Email should contain from 3 to 20 symbols")
     @Column(unique = true, nullable = false)
     private String email;
 
     @OneToMany(mappedBy = "author")
-    private List<Task> authoredTasks;
+    private Set<Task> authoredTasks;
 
     @OneToMany(mappedBy = "assignee")
-    private List<Task> assignedTasks;
+    private Set<Task> assignedTasks;
 }

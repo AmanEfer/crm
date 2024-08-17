@@ -2,7 +2,7 @@ package com.amanefer.crm.services.task;
 
 import com.amanefer.crm.entities.Task;
 import com.amanefer.crm.entities.User;
-import com.amanefer.crm.exceptions.TaskException;
+import com.amanefer.crm.exceptions.TaskNotFoundException;
 import com.amanefer.crm.repositories.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task getTaskById(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new TaskException(String.format("Task with ID %d wasn't found", id)));
+                .orElseThrow(() -> new TaskNotFoundException(String.format("Task with ID %d wasn't found", id)));
     }
 
     @Override

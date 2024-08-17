@@ -10,7 +10,6 @@ public class UserResponseDto {
 
     private Long id;
     private String name;
-    private String password;
     private String email;
     private List<Task> authoredTasks;
     private List<Task> assignedTasks;

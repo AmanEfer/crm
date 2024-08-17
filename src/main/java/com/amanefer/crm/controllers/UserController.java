@@ -1,8 +1,8 @@
 package com.amanefer.crm.controllers;
 
+import com.amanefer.crm.dto.user.UserBasicFieldsDto;
 import com.amanefer.crm.dto.user.UserRequestDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
-import com.amanefer.crm.entities.User;
 import com.amanefer.crm.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,11 +24,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private static final String DELETE_MESSAGE = "User with ID %s was successfully deleted";
     private final UserService userService;
 
     @GetMapping
-    public List<UserResponseDto> getAllUsers() {
+    public List<UserBasicFieldsDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
@@ -43,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto user) {
+    public ResponseEntity<UserBasicFieldsDto> createUser(@RequestBody UserRequestDto user) {
         return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
     }
 
@@ -54,7 +53,6 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return new ResponseEntity<>(String.format(DELETE_MESSAGE, id), HttpStatus.OK);
+        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
     }
 }

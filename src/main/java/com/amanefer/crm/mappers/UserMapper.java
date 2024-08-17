@@ -1,5 +1,6 @@
 package com.amanefer.crm.mappers;
 
+import com.amanefer.crm.dto.user.UserBasicFieldsDto;
 import com.amanefer.crm.dto.user.UserRequestDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.entities.User;
@@ -14,5 +15,8 @@ import java.util.List;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         uses = TaskMapper.class)
 public interface UserMapper extends BaseMapper<UserRequestDto, UserResponseDto, User> {
-    List<UserResponseDto> fromEntityListToDtoList(List<User> users);
+
+    UserBasicFieldsDto fromUserToBasicFieldsDto(User user);
+
+    List<UserBasicFieldsDto> fromEntityListToDtoList(List<User> users);
 }
