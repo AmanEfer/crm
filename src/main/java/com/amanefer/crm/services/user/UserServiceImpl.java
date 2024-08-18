@@ -4,20 +4,26 @@ import com.amanefer.crm.dto.user.UserBasicFieldsDto;
 import com.amanefer.crm.dto.user.UserRequestDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.entities.User;
-import com.amanefer.crm.exceptions.UserNotFoundException;
+import com.amanefer.crm.exceptions.UserException;
 import com.amanefer.crm.mappers.UserMapper;
 import com.amanefer.crm.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     public static final String ID_NOT_FOUND_MESSAGE = "User with ID %d wasn't found";
     public static final String EMAIL_NOT_FOUND_MESSAGE = "User with email '%s' wasn't found";
@@ -39,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getUserByEmail(String email) {
         return userMapper.fromEntityToDto(userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(String.format(EMAIL_NOT_FOUND_MESSAGE, email))));
+                .orElseThrow(() -> new UserException(String.format(EMAIL_NOT_FOUND_MESSAGE, email))));
     }
 
     @Override
@@ -79,6 +85,20 @@ public class UserServiceImpl implements UserService {
 
     private User findUserInDB(Long id) {
         return userRepository.findUserById(id)
-                .orElseThrow(() -> new UserNotFoundException(String.format(ID_NOT_FOUND_MESSAGE, id)));
+                .orElseThrow(() -> new UserException(String.format(ID_NOT_FOUND_MESSAGE, id)));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Collection<GrantedAuthority> authorities = Collections.emptyList(); // TODO: 18.08.2024 реализовать позже, когда сделаю entity Role
+
+        return userRepository.findUserByEmail(username)
+                .map(user -> org.springframework.security.core.userdetails.User.builder()
+                        .username(username)
+                        .password(user.getPassword())
+                        .authorities(authorities)
+                        .build())
+                .orElseThrow(() -> new UserException(EMAIL_NOT_FOUND_MESSAGE));
+
     }
 }

@@ -4,7 +4,6 @@ import com.amanefer.crm.entities.Task;
 import com.amanefer.crm.entities.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TaskService {
 

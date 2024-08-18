@@ -3,6 +3,7 @@ package com.amanefer.crm.exceptions;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,8 +15,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({UserNotFoundException.class, TaskNotFoundException.class})
-    public ResponseEntity<String> handleUserAndTaskNotFoundException(UserNotFoundException ex) {
+    @ExceptionHandler({UserException.class, TaskException.class, UsernameNotFoundException.class})
+    public ResponseEntity<String> handleUserAndTaskException(UserException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
