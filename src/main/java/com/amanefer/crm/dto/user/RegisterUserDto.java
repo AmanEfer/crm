@@ -3,9 +3,9 @@ package com.amanefer.crm.dto.user;
 import lombok.Data;
 
 @Data
-public class UserBasicFieldsDto {
+public class RegisterUserDto {
 
-    private Integer id;
     private String name;
+    private String password;
     private String email;
 }

@@ -18,7 +18,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
 
     @Override
-    public Task getTaskById(Long id) {
+    public Task getTaskById(Integer id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new TaskException(String.format("Task with ID %d wasn't found", id)));
     }
@@ -47,7 +47,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void deleteTask(Long id) {
+    public void deleteTask(Integer id) {
         taskRepository.deleteById(id);
     }
 }

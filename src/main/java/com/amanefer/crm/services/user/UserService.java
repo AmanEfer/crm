@@ -1,22 +1,22 @@
 package com.amanefer.crm.services.user;
 
-import com.amanefer.crm.dto.user.UserBasicFieldsDto;
-import com.amanefer.crm.dto.user.UserRequestDto;
-import com.amanefer.crm.dto.user.UserResponseDto;
+import com.amanefer.crm.dto.user.RegisterUserDto;
+import com.amanefer.crm.entities.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
-    List<UserBasicFieldsDto> getAllUsers();
+    List<User> getAllUsers();
 
-    UserResponseDto getUserById(Long id);
+    User getUserById(Integer id);
 
-    UserResponseDto getUserByEmail(String email);
+    User getUserByEmail(String email);
 
-    UserBasicFieldsDto createUser(UserRequestDto user);
+    User createUser(RegisterUserDto user);
 
-    UserResponseDto updateUser(Long id, UserRequestDto user);
+    User updateUser(Integer id, RegisterUserDto user);
 
-    String deleteUser(Long id);
+    String deleteUser(Integer id);
 }

@@ -32,7 +32,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
+    public Task getTaskById(@PathVariable Integer id) {
         return taskService.getTaskById(id);
     }
 
@@ -42,7 +42,7 @@ public class TaskController {
     }
 
     @GetMapping("/assignee/{assigneeId}")
-    public ResponseEntity<List<Task>> getTasksByAssignee(@PathVariable Long assigneeId) {
+    public ResponseEntity<List<Task>> getTasksByAssignee(@PathVariable Integer assigneeId) {
         User assignee = new User();
         assignee.setId(assigneeId);
         List<Task> tasks = taskService.getTasksByAssignee(assignee);
@@ -56,7 +56,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTask(@PathVariable Integer id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }

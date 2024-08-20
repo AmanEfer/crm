@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class CommentResponseDto {
 
-    private Long id;
+    private Integer id;
     private Task task;
     private User author;
     private String content;

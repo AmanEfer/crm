@@ -1,13 +1,16 @@
 package com.amanefer.crm.controllers;
 
+import com.amanefer.crm.dto.user.RegisterUserDto;
 import com.amanefer.crm.dto.user.UserBasicFieldsDto;
-import com.amanefer.crm.dto.user.UserRequestDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
+import com.amanefer.crm.mappers.UserMapper;
+import com.amanefer.crm.services.auth.AuthenticationService;
 import com.amanefer.crm.services.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,42 +28,48 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final AuthenticationService authService;
     private final UserService userService;
+    private final UserMapper userMapper;
 
 
     @Operation(summary = "Get all users")
     @GetMapping
     public List<UserBasicFieldsDto> getAllUsers() {
-        return userService.getAllUsers();
+        return userMapper.fromEntityListToDtoList(userService.getAllUsers());
     }
 
     @Operation(summary = "Get user by ID")
     @GetMapping("/{id}")
-    public UserResponseDto getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public UserResponseDto getUserById(@PathVariable Integer id) {
+        return userMapper.fromEntityToDto(userService.getUserById(id));
     }
 
     @Operation(summary = "Get user by email")
     @GetMapping("/user")
     public UserResponseDto getUserByEmail(@RequestParam String email) {
-        return userService.getUserByEmail(email);
+        return userMapper.fromEntityToDto(userService.getUserByEmail(email));
     }
 
     @Operation(summary = "Create new user")
     @PostMapping
-    public ResponseEntity<UserBasicFieldsDto> createUser(@RequestBody UserRequestDto user) {
-        return new ResponseEntity<>(userService.createUser(user), HttpStatus.CREATED);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserBasicFieldsDto> createUser(@RequestBody RegisterUserDto dto) {
+        UserBasicFieldsDto user = userMapper.fromUserToBasicFieldsDto(authService.registerNewUser(dto));
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update user")
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UserRequestDto user) {
-        return new ResponseEntity<>(userService.updateUser(id, user), HttpStatus.OK);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Integer id, @RequestBody RegisterUserDto user) {
+        return new ResponseEntity<>(userMapper.fromEntityToDto(userService.updateUser(id, user)), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete user")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
         return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
     }
 }

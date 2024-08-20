@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class UserResponseDto {
 
-    private Long id;
+    private Integer id;
     private String name;
     private String email;
     private List<Task> authoredTasks;

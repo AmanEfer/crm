@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class TaskResponseDto {
 
-    private Long id;
+    private Integer id;
     private String title;
     private String description;
     private TaskStatus status;
