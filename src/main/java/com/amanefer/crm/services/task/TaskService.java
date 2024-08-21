@@ -1,11 +1,17 @@
 package com.amanefer.crm.services.task;
 
+import com.amanefer.crm.dto.task.TaskRequestDto;
+import com.amanefer.crm.dto.task.TaskResponseAsPage;
+import com.amanefer.crm.dto.task.TaskResponseDto;
 import com.amanefer.crm.entities.Task;
 import com.amanefer.crm.entities.User;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
 public interface TaskService {
+
+    TaskResponseAsPage getAllUsersAllTasks(PageRequest pageRequest);
 
     Task getTaskById(Integer id);
 
@@ -13,9 +19,9 @@ public interface TaskService {
 
     List<Task> getTasksByAssignee(User assignee);
 
-    Task createTask(Task task);
+    TaskResponseDto createTask(TaskRequestDto dto, String email);
 
-    Task updateTask(Task task);
+    TaskResponseDto updateTask(TaskRequestDto dto);
 
     void deleteTask(Integer id);
 }

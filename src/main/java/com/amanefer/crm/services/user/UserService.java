@@ -1,6 +1,5 @@
 package com.amanefer.crm.services.user;
 
-import com.amanefer.crm.dto.user.RegisterUserDto;
 import com.amanefer.crm.entities.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -14,9 +13,9 @@ public interface UserService extends UserDetailsService {
 
     User getUserByEmail(String email);
 
-    User createUser(RegisterUserDto user);
+    User createUser(User user);
 
-    User updateUser(Integer id, RegisterUserDto user);
+    User updateUser(Integer id, User user);
 
     String deleteUser(Integer id);
 }

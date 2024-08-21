@@ -12,7 +12,7 @@ create index if not exists idx_users_email on task_system.users (email);
 create table if not exists task_system.roles
 (
     id   serial primary key,
-    name varchar(20) not null unique default 'USER'
+    name varchar(20) not null unique default 'ROLE_USER'
 );
 
 create table if not exists task_system.users_roles
@@ -38,6 +38,6 @@ create table if not exists task_system.comments
 (
     id        serial primary key,
     task_id   int references tasks (id) on delete cascade,
-    author_id int references users (id) on delete set null,
+--     author_id int references users (id) on delete cascade,
     content   text
 );

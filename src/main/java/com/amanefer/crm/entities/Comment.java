@@ -22,9 +22,9 @@ public class Comment {
     @JoinColumn(name = "task_id")
     private Task task;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author;
+//    @ManyToOne
+//    @JoinColumn(name = "author_id")
+//    private User author;
 
     private String content;
 }

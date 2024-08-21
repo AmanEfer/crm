@@ -1,6 +1,5 @@
 package com.amanefer.crm.dto.task;
 
-import com.amanefer.crm.entities.User;
 import com.amanefer.crm.states.TaskPriority;
 import com.amanefer.crm.states.TaskStatus;
 import lombok.Data;
@@ -12,6 +11,4 @@ public class TaskRequestDto {
     private String description;
     private TaskStatus status;
     private TaskPriority priority;
-    private User author;
-    private User assignee;
 }
