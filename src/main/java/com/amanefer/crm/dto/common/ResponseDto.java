@@ -1,12 +1,11 @@
-package com.amanefer.crm.dto.error;
+package com.amanefer.crm.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ErrorDto {
+public class ResponseDto {
 
     private String message;
-    private int status;
 }

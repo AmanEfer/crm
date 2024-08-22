@@ -42,6 +42,7 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
+
         return extractClaims(token).getSubject();
     }
 
@@ -54,12 +55,14 @@ public class JwtService {
     }
 
     private static List<String> getRoles(UserDetails userDetails) {
+
         return userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
     }
 
     private Claims extractClaims(String token) {
+
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -69,6 +72,7 @@ public class JwtService {
 
     private SecretKey getSigningKey() {
         byte[] decodedKey = Decoders.BASE64.decode(secret);
+
         return Keys.hmacShaKeyFor(decodedKey);
     }
 }

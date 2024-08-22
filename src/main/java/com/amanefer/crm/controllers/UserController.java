@@ -1,5 +1,6 @@
 package com.amanefer.crm.controllers;
 
+import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.user.RegisterUserDto;
 import com.amanefer.crm.dto.user.UpdateUserDto;
 import com.amanefer.crm.dto.user.UserBasicFieldsDto;
@@ -32,18 +33,21 @@ public class UserController {
     @Operation(summary = "Get all users")
     @GetMapping
     public List<UserBasicFieldsDto> getAllUsers() {
+
         return userService.getAllUsers();
     }
 
     @Operation(summary = "Get user by ID")
     @GetMapping("/{id}")
     public UserResponseDto getUserById(@PathVariable Integer id) {
+
         return userService.getUserById(id);
     }
 
     @Operation(summary = "Get user by email")
     @GetMapping("/user")
     public UserResponseDto getUserByEmail(@RequestParam String email) {
+
         return userService.getUserByEmail(email);
     }
 
@@ -51,6 +55,7 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserBasicFieldsDto> createUser(@RequestBody RegisterUserDto dto) {
+
         return new ResponseEntity<>(userService.createUser(dto), HttpStatus.CREATED);
     }
 
@@ -58,13 +63,15 @@ public class UserController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Integer id, @RequestBody UpdateUserDto dto) {
+
         return new ResponseEntity<>(userService.updateUser(id, dto), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete user")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable Integer id) {
+
         return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
     }
 }

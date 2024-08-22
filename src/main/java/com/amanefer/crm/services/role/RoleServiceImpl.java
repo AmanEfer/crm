@@ -17,6 +17,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role getDefaultRole() {
+
         return roleRepository.findByName(defaultRole)
                 .orElseThrow(() -> new IllegalArgumentException("Such role doesn't exist"));
     }

@@ -1,5 +1,6 @@
 package com.amanefer.crm.services.user;
 
+import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.user.RegisterUserDto;
 import com.amanefer.crm.dto.user.UpdateUserDto;
 import com.amanefer.crm.dto.user.UserBasicFieldsDto;
@@ -15,6 +16,8 @@ public interface UserService extends UserDetailsService {
 
     UserResponseDto getUserById(Integer id);
 
+    User getUserByIdAsEntity(Integer id);
+
     UserResponseDto getUserByEmail(String email);
 
     User getUserByEmailAsEntity(String email);
@@ -23,5 +26,6 @@ public interface UserService extends UserDetailsService {
 
     UserResponseDto updateUser(Integer id, UpdateUserDto dto);
 
-    String deleteUser(Integer id);
+    ResponseDto deleteUser(Integer id);
+
 }

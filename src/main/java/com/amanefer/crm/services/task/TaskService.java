@@ -1,29 +1,34 @@
 package com.amanefer.crm.services.task;
 
+import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.task.TaskRequestDto;
 import com.amanefer.crm.dto.task.TaskResponseAsPage;
 import com.amanefer.crm.dto.task.TaskResponseDto;
-import com.amanefer.crm.entities.Task;
-import com.amanefer.crm.entities.User;
-import org.springframework.data.domain.PageRequest;
-
-import java.util.List;
+import com.amanefer.crm.dto.task.UpdateTaskDto;
+import org.springframework.data.domain.Pageable;
 
 public interface TaskService {
 
-    TaskResponseAsPage getAllUsersAllTasks(PageRequest pageRequest);
+    TaskResponseAsPage getAllUsersAllTasks(Pageable pageable);
 
-    TaskResponseAsPage getCurrentUserAllTasks(PageRequest pageRequest, String email);
+    TaskResponseAsPage getCurrentUserAllTasks(Pageable pageable, String email);
 
-    Task getTaskById(Integer id);
+    TaskResponseDto getTaskById(Integer id);
 
-    List<Task> getTasksByAuthor(User author);
+    TaskResponseAsPage getTasksByAuthor(Pageable pageable, Integer authorId);
 
-    List<Task> getTasksByAssignee(User assignee);
+    TaskResponseAsPage getTasksByAssignee(Pageable pageable, Integer assigneeId);
 
     TaskResponseDto createTask(TaskRequestDto dto, String email);
 
-    TaskResponseDto updateTask(TaskRequestDto dto);
+    TaskResponseDto updateTask(Integer id, String email, UpdateTaskDto dto);
 
-    void deleteTask(int id, String email);
+    TaskResponseDto changeStatus(String email, Integer id, String status);
+
+    ResponseDto deleteTask(int id, String email);
+
+    TaskResponseDto changePriority(String email, Integer id, String priority);
+
+    TaskResponseDto changeAssignee(String email, Integer id, Integer assigneeId);
+
 }

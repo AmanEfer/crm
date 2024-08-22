@@ -1,5 +1,6 @@
 package com.amanefer.crm.services.user;
 
+import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.user.RegisterUserDto;
 import com.amanefer.crm.dto.user.UpdateUserDto;
 import com.amanefer.crm.dto.user.UserBasicFieldsDto;
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     public static final String ID_NOT_FOUND_MESSAGE = "User with ID %d wasn't found";
     public static final String EMAIL_NOT_FOUND_MESSAGE = "User with email '%s' wasn't found";
-    private static final String DELETE_MESSAGE = "User with ID %s was successfully deleted";
+    public static final String DELETE_MESSAGE = "User with ID %s was successfully deleted";
     public static final String ALREADY_EXISTS_MESSAGE = "Such user already exists";
 
     private final UserRepository userRepository;
@@ -41,27 +42,39 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserBasicFieldsDto> getAllUsers() {
+
         return userMapper.fromEntityListToDtoList(userRepository.findAll());
     }
 
     @Override
     public UserResponseDto getUserById(Integer id) {
+
         return userMapper.fromEntityToDto(findUserInDB(id));
     }
 
     @Override
+    public User getUserByIdAsEntity(Integer id) {
+
+        return userRepository.findUserById(id)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(ID_NOT_FOUND_MESSAGE, id)));
+    }
+
+    @Override
     public UserResponseDto getUserByEmail(String email) {
+
         return userMapper.fromEntityToDto(getUserByEmailAsEntity(email));
     }
 
     @Override
     public User getUserByEmailAsEntity(String email) {
+
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(EMAIL_NOT_FOUND_MESSAGE, email)));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         return userRepository.findUserByEmail(username)
                 .map(convertToUserDetails())
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(EMAIL_NOT_FOUND_MESSAGE, username)));
@@ -100,19 +113,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public String deleteUser(Integer id) {
+    public ResponseDto deleteUser(Integer id) {
         findUserInDB(id);
         userRepository.deleteById(id);
 
-        return String.format(DELETE_MESSAGE, id);
+        return new ResponseDto(String.format(DELETE_MESSAGE, id));
     }
 
     private User findUserInDB(Integer id) {
+
         return userRepository.findUserById(id)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(ID_NOT_FOUND_MESSAGE, id)));
     }
 
     private static Set<SimpleGrantedAuthority> getAuthorities(User user) {
+
         return user.getRoles().stream()
                 .map(Role::getName)
                 .map(SimpleGrantedAuthority::new)
@@ -120,6 +135,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private static Function<User, UserDetails> convertToUserDetails() {
+
         return user -> org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
