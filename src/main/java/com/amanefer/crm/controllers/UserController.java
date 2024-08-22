@@ -1,10 +1,9 @@
 package com.amanefer.crm.controllers;
 
 import com.amanefer.crm.dto.user.RegisterUserDto;
+import com.amanefer.crm.dto.user.UpdateUserDto;
 import com.amanefer.crm.dto.user.UserBasicFieldsDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
-import com.amanefer.crm.mappers.UserMapper;
-import com.amanefer.crm.services.auth.AuthenticationService;
 import com.amanefer.crm.services.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -28,44 +27,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final AuthenticationService authService;
     private final UserService userService;
-    private final UserMapper userMapper;
-
 
     @Operation(summary = "Get all users")
     @GetMapping
     public List<UserBasicFieldsDto> getAllUsers() {
-        return userMapper.fromEntityListToDtoList(userService.getAllUsers());
+        return userService.getAllUsers();
     }
 
     @Operation(summary = "Get user by ID")
     @GetMapping("/{id}")
     public UserResponseDto getUserById(@PathVariable Integer id) {
-        return userMapper.fromEntityToDto(userService.getUserById(id));
+        return userService.getUserById(id);
     }
 
     @Operation(summary = "Get user by email")
     @GetMapping("/user")
     public UserResponseDto getUserByEmail(@RequestParam String email) {
-        return userMapper.fromEntityToDto(userService.getUserByEmail(email));
+        return userService.getUserByEmail(email);
     }
 
     @Operation(summary = "Create new user")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserBasicFieldsDto> createUser(@RequestBody RegisterUserDto dto) {
-        UserBasicFieldsDto user = userMapper.fromUserToBasicFieldsDto(authService.registerNewUser(dto));
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.createUser(dto), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update user")
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Integer id, @RequestBody RegisterUserDto dto) {
-        UserResponseDto user = userMapper.fromEntityToDto(
-                userService.updateUser(id, userMapper.fromDtoToEntity(dto)));
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Integer id, @RequestBody UpdateUserDto dto) {
+        return new ResponseEntity<>(userService.updateUser(id, dto), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete user")

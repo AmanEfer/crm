@@ -31,24 +31,17 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseAsPage getAllUsersAllTasks(PageRequest pageRequest) {
         Page<Task> tasksPage = taskRepository.findAll(pageRequest);
+        List<TaskResponseDto> content = getContent(tasksPage);
 
-        List<TaskResponseDto> content = tasksPage.getContent().stream()
-                .map(this::convertToDto)
-                .toList();
-
-        return TaskResponseAsPage.builder()
-                .tasks(content)
-                .pageNumber(tasksPage.getNumber())
-                .pagesCount(tasksPage.getTotalPages())
-                .build();
+        return convertToTaskResponseAsPage(tasksPage, content);
     }
 
-    private TaskResponseDto convertToDto(Task task) {
-        TaskResponseDto dto = taskMapper.fromEntityToDto(task);
-        dto.setAuthorId(task.getAuthor().getId());
-        dto.setAssigneeId(task.getAssignee().getId());
+    @Override
+    public TaskResponseAsPage getCurrentUserAllTasks(PageRequest pageRequest, String email) {
+        Page<Task> tasksPage = taskRepository.getUserAllTasks(pageRequest, email);
+        List<TaskResponseDto> content = getContent(tasksPage);
 
-        return dto;
+        return convertToTaskResponseAsPage(tasksPage, content);
     }
 
     @Override
@@ -77,7 +70,7 @@ public class TaskServiceImpl implements TaskService {
         task.setAssignee(user);
         task.setComments(new ArrayList<>());
 
-        return convertToDto(taskRepository.save(task));
+        return convertToTaskResponseDto(taskRepository.save(task));
     }
 
     @Override
@@ -95,6 +88,29 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private User getUser(String email) {
-        return userService.getUserByEmail(email);
+        return userService.getUserByEmailAsEntity(email);
     }
+
+    private TaskResponseDto convertToTaskResponseDto(Task task) {
+        TaskResponseDto dto = taskMapper.fromEntityToDto(task);
+        dto.setAuthorId(task.getAuthor().getId());
+        dto.setAssigneeId(task.getAssignee().getId());
+
+        return dto;
+    }
+
+    private static TaskResponseAsPage convertToTaskResponseAsPage(Page<Task> tasksPage, List<TaskResponseDto> content) {
+        return TaskResponseAsPage.builder()
+                .tasks(content)
+                .pageNumber(tasksPage.getNumber())
+                .pagesCount(tasksPage.getTotalPages())
+                .build();
+    }
+
+    private List<TaskResponseDto> getContent(Page<Task> tasksPage) {
+        return tasksPage.getContent().stream()
+                .map(this::convertToTaskResponseDto)
+                .toList();
+    }
+
 }

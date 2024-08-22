@@ -13,6 +13,8 @@ public interface TaskService {
 
     TaskResponseAsPage getAllUsersAllTasks(PageRequest pageRequest);
 
+    TaskResponseAsPage getCurrentUserAllTasks(PageRequest pageRequest, String email);
+
     Task getTaskById(Integer id);
 
     List<Task> getTasksByAuthor(User author);

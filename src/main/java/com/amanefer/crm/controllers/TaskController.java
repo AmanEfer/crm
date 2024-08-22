@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,11 +33,19 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<TaskResponseAsPage> getAllUsersAllTasks(
+    public ResponseEntity<TaskResponseAsPage> getAllTasks(
             @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "3") int size) {
+            @RequestParam(required = false, defaultValue = "3") int size,
+            @RequestParam(value = "only_my", required = false, defaultValue = "true") boolean onlyMy,
+            @AuthenticationPrincipal UserDetails user) {
 
-        return new ResponseEntity<>(taskService.getAllUsersAllTasks(PageRequest.of(page, size)), HttpStatus.OK);
+        TaskResponseAsPage response;
+        if (onlyMy)
+            response = taskService.getCurrentUserAllTasks(PageRequest.of(page, size), user.getUsername());
+        else
+            response = taskService.getAllUsersAllTasks(PageRequest.of(page, size));
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

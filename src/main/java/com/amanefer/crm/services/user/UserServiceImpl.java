@@ -1,14 +1,20 @@
 package com.amanefer.crm.services.user;
 
+import com.amanefer.crm.dto.user.RegisterUserDto;
+import com.amanefer.crm.dto.user.UpdateUserDto;
+import com.amanefer.crm.dto.user.UserBasicFieldsDto;
+import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.entities.Role;
 import com.amanefer.crm.entities.User;
 import com.amanefer.crm.exceptions.UserException;
+import com.amanefer.crm.mappers.UserMapper;
 import com.amanefer.crm.repositories.UserRepository;
 import com.amanefer.crm.services.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,19 +35,26 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserBasicFieldsDto> getAllUsers() {
+        return userMapper.fromEntityListToDtoList(userRepository.findAll());
     }
 
     @Override
-    public User getUserById(Integer id) {
-        return findUserInDB(id);
+    public UserResponseDto getUserById(Integer id) {
+        return userMapper.fromEntityToDto(findUserInDB(id));
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public UserResponseDto getUserByEmail(String email) {
+        return userMapper.fromEntityToDto(getUserByEmailAsEntity(email));
+    }
+
+    @Override
+    public User getUserByEmailAsEntity(String email) {
         return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserException(String.format(EMAIL_NOT_FOUND_MESSAGE, email)));
     }
@@ -55,7 +68,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User createUser(User user) {
+    public UserBasicFieldsDto createUser(RegisterUserDto dto) {
+        User user = userMapper.fromDtoToEntity(dto);
+
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserException("Such user already exists");
         }
@@ -63,23 +78,23 @@ public class UserServiceImpl implements UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.getDefaultRole());
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(roles);
         user.setAuthoredTasks(new HashSet<>());
         user.setAssignedTasks(new HashSet<>());
 
-        return userRepository.save(user);
+        return userMapper.fromUserToBasicFieldsDto(userRepository.save(user));
     }
 
     @Override
     @Transactional
-    public User updateUser(Integer id, User user) {
-        User foundUser = findUserInDB(id);
+    public UserResponseDto updateUser(Integer id, UpdateUserDto dto) {
+        User updatableUser = findUserInDB(id);
 
-        user.setId(id);
-        user.setAssignedTasks(foundUser.getAssignedTasks());
-        user.setAuthoredTasks(foundUser.getAuthoredTasks());
+        updatableUser.setName(dto.getName());
+        updatableUser.setEmail(dto.getEmail());
 
-        return userRepository.save(user);
+        return userMapper.fromEntityToDto(updatableUser);
     }
 
     @Override

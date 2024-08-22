@@ -16,6 +16,6 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
     List<Task> findByAssignee(User assignee);
 
     @Query("from Task t where t.assignee.email = :email")
-    Page<Task> getAllTasks(Pageable pageable, String email);
+    Page<Task> getUserAllTasks(Pageable pageable, String email);
 
 }
