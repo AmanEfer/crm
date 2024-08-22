@@ -40,6 +40,7 @@ public class TaskController {
             @AuthenticationPrincipal UserDetails user) {
 
         TaskResponseAsPage response;
+
         if (onlyMy)
             response = taskService.getCurrentUserAllTasks(PageRequest.of(page, size), user.getUsername());
         else
@@ -49,7 +50,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Integer id) {
+    public Task getTaskById(@PathVariable int id) {
         return taskService.getTaskById(id);
     }
 
@@ -59,7 +60,7 @@ public class TaskController {
     }
 
     @GetMapping("/assignee/{assigneeId}")
-    public ResponseEntity<List<Task>> getTasksByAssignee(@PathVariable Integer assigneeId) {
+    public ResponseEntity<List<Task>> getTasksByAssignee(@PathVariable int assigneeId) {
         User assignee = new User();
         assignee.setId(assigneeId);
         List<Task> tasks = taskService.getTasksByAssignee(assignee);
@@ -79,8 +80,8 @@ public class TaskController {
 //    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Integer id) {
-        taskService.deleteTask(id);
+    public ResponseEntity<Void> deleteTask(@PathVariable int id, @AuthenticationPrincipal UserDetails user) {
+        taskService.deleteTask(id, user.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

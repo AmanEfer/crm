@@ -5,7 +5,8 @@ import com.amanefer.crm.dto.task.TaskResponseAsPage;
 import com.amanefer.crm.dto.task.TaskResponseDto;
 import com.amanefer.crm.entities.Task;
 import com.amanefer.crm.entities.User;
-import com.amanefer.crm.exceptions.TaskException;
+import com.amanefer.crm.exceptions.TaskForbiddenOperationException;
+import com.amanefer.crm.exceptions.TaskNotFoundException;
 import com.amanefer.crm.mappers.TaskMapper;
 import com.amanefer.crm.repositories.TaskRepository;
 import com.amanefer.crm.services.user.UserService;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
+    private static final String DELETE_NOT_ALLOWED_MESSAGE = "You can delete only your tasks";
 
     private final TaskRepository taskRepository;
     private final UserService userService;
@@ -47,7 +49,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task getTaskById(Integer id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new TaskException(String.format("Task with ID %d wasn't found", id)));
+                .orElseThrow(() -> new TaskNotFoundException(String.format("Task with ID %d wasn't found", id)));
     }
 
     @Override
@@ -70,7 +72,9 @@ public class TaskServiceImpl implements TaskService {
         task.setAssignee(user);
         task.setComments(new ArrayList<>());
 
-        return convertToTaskResponseDto(taskRepository.save(task));
+        Task saved = taskRepository.save(task);
+
+        return convertToTaskResponseDto(saved);
     }
 
     @Override
@@ -81,8 +85,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void deleteTask(Integer id) {
-        getTaskById(id);
+    public void deleteTask(int id, String email) {
+        Task task = getTaskById(id);
+
+        if (!task.getAssignee().getEmail().equals(email))
+            throw new TaskForbiddenOperationException(DELETE_NOT_ALLOWED_MESSAGE);
+
 
         taskRepository.deleteById(id);
     }

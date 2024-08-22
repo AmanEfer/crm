@@ -25,5 +25,5 @@ public interface TaskService {
 
     TaskResponseDto updateTask(TaskRequestDto dto);
 
-    void deleteTask(Integer id);
+    void deleteTask(int id, String email);
 }

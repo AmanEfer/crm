@@ -6,7 +6,7 @@ import com.amanefer.crm.dto.user.UserBasicFieldsDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.entities.Role;
 import com.amanefer.crm.entities.User;
-import com.amanefer.crm.exceptions.UserException;
+import com.amanefer.crm.exceptions.UserConflictException;
 import com.amanefer.crm.mappers.UserMapper;
 import com.amanefer.crm.repositories.UserRepository;
 import com.amanefer.crm.services.role.RoleService;
@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     public static final String ID_NOT_FOUND_MESSAGE = "User with ID %d wasn't found";
     public static final String EMAIL_NOT_FOUND_MESSAGE = "User with email '%s' wasn't found";
     private static final String DELETE_MESSAGE = "User with ID %s was successfully deleted";
+    public static final String ALREADY_EXISTS_MESSAGE = "Such user already exists";
 
     private final UserRepository userRepository;
     private final RoleService roleService;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByEmailAsEntity(String email) {
         return userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new UserException(String.format(EMAIL_NOT_FOUND_MESSAGE, email)));
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(EMAIL_NOT_FOUND_MESSAGE, email)));
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.fromDtoToEntity(dto);
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new UserException("Such user already exists");
+            throw new UserConflictException(ALREADY_EXISTS_MESSAGE);
         }
 
         Set<Role> roles = new HashSet<>();
@@ -108,7 +109,7 @@ public class UserServiceImpl implements UserService {
 
     private User findUserInDB(Integer id) {
         return userRepository.findUserById(id)
-                .orElseThrow(() -> new UserException(String.format(ID_NOT_FOUND_MESSAGE, id)));
+                .orElseThrow(() -> new UsernameNotFoundException(String.format(ID_NOT_FOUND_MESSAGE, id)));
     }
 
     private static Set<SimpleGrantedAuthority> getAuthorities(User user) {

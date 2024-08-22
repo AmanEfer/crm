@@ -1,5 +1,6 @@
 package com.amanefer.crm.exceptions;
 
+import com.amanefer.crm.dto.error.ErrorDto;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler({UserException.class, TaskException.class, UsernameNotFoundException.class})
-    public ResponseEntity<String> handleUserAndTaskException(UserException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -44,5 +40,29 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleUserNotFoundException(UsernameNotFoundException ex) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleTaskNotFoundException(TaskNotFoundException ex) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserConflictException.class)
+    public ResponseEntity<ErrorDto> handleUserConflictException(UserConflictException ex) {
+        return buildErrorResponse(ex, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(TaskForbiddenOperationException.class)
+    public ResponseEntity<ErrorDto> handleTaskForbiddenOperationException(TaskForbiddenOperationException ex) {
+        return buildErrorResponse(ex, HttpStatus.FORBIDDEN);
+    }
+
+    private ResponseEntity<ErrorDto> buildErrorResponse(Exception ex, HttpStatus status) {
+        return new ResponseEntity<>(new ErrorDto(ex.getMessage(), status.value()), status);
     }
 }
