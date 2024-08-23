@@ -30,14 +30,14 @@ create table if not exists task_system.tasks
     description text,
     status      varchar(20),
     priority    varchar(20),
-    author_id   int references users (id) on delete set null,
-    assignee_id int references users (id) on delete set null
+    author_id   int references task_system.users (id) on delete set null,
+    assignee_id int references task_system.users (id) on delete set null
 );
 
 create table if not exists task_system.comments
 (
     id        serial primary key,
-    task_id   int references tasks (id) on delete cascade,
---     author_id int references users (id) on delete cascade,
-    content   text
+    task_id   int  not null references task_system.tasks (id) on delete cascade,
+    author_id int  not null references task_system.users (id) on delete cascade,
+    content   text not null
 );

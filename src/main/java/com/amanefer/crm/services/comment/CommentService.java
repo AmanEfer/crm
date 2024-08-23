@@ -1,17 +1,9 @@
 package com.amanefer.crm.services.comment;
 
-import com.amanefer.crm.entities.Comment;
-import com.amanefer.crm.entities.Task;
-
-import java.util.List;
+import com.amanefer.crm.dto.comment.CreateCommentDto;
+import com.amanefer.crm.dto.task.TaskResponseDto;
 
 public interface CommentService {
 
-    List<Comment> getCommentsByTask(Task task);
-
-    Comment createComment(Comment comment);
-
-    Comment updateComment(Comment comment);
-
-    void deleteComment(Integer id);
+    TaskResponseDto addNewComment(String email, Integer id, CreateCommentDto dto);
 }

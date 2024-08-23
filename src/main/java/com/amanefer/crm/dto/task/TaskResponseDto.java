@@ -1,6 +1,6 @@
 package com.amanefer.crm.dto.task;
 
-import com.amanefer.crm.entities.Comment;
+import com.amanefer.crm.dto.comment.CommentResponseDto;
 import com.amanefer.crm.states.TaskPriority;
 import com.amanefer.crm.states.TaskStatus;
 import lombok.Data;
@@ -17,5 +17,5 @@ public class TaskResponseDto {
     private TaskPriority priority;
     private Integer authorId;
     private Integer assigneeId;
-    private List<Comment> comments;
+    private List<CommentResponseDto> comments;
 }

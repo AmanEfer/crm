@@ -66,6 +66,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public Task getTaskByIdAsEntity(Integer id) {
+
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(String.format(TASK_NOT_FOUND_FOUND, id)));
+    }
+
+    @Override
     public TaskResponseAsPage getTasksByAuthor(Pageable pageable, Integer authorId) {
         Page<Task> tasksPage = taskRepository.findByAuthor(pageable, authorId);
         List<TaskResponseDto> content = getContent(tasksPage);
@@ -78,7 +85,8 @@ public class TaskServiceImpl implements TaskService {
         Page<Task> tasksPage = taskRepository.findByAssignee(pageable, assigneeId);
         List<TaskResponseDto> content = getContent(tasksPage);
 
-        return convertToTaskResponseAsPage(tasksPage, content);    }
+        return convertToTaskResponseAsPage(tasksPage, content);
+    }
 
     @Override
     @Transactional
@@ -177,12 +185,6 @@ public class TaskServiceImpl implements TaskService {
 
         return new ResponseDto(String.format(DELETE_SUCCESS_MESSAGE, id));
 
-    }
-
-    private Task getTaskByIdAsEntity(Integer id) {
-
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException(String.format(TASK_NOT_FOUND_FOUND, id)));
     }
 
     private User getUser(String email) {

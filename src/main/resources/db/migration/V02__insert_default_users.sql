@@ -17,8 +17,24 @@ values ('task1', 'some description1', 'IN_WAITING', 'MEDIUM', 1, 1),
        ('task3', 'some description4', 'IN_WAITING', 'MEDIUM', 2, 1),
        ('task4', 'some description5', 'IN_WAITING', 'MEDIUM', 2, 2);
 
-select setval(pg_get_serial_sequence('task_system.users', 'id'), coalesce(max(id), 1)) from task_system.users;
-select setval(pg_get_serial_sequence('task_system.roles', 'id'), coalesce(max(id), 1)) from task_system.roles;
-select setval(pg_get_serial_sequence('task_system.users_roles', 'id'), coalesce(max(id), 1)) from task_system.users_roles;
-select setval(pg_get_serial_sequence('task_system.tasks', 'id'), coalesce(max(id), 1)) from task_system.tasks;
-select setval(pg_get_serial_sequence('task_system.comments', 'id'), coalesce(max(id), 1)) from task_system.comments;
+insert into task_system.comments (task_id, author_id, content)
+values (1, 1, 'comment1'),
+       (1, 2, 'comment2'),
+       (2, 1, 'comment3'),
+       (2, 2, 'comment4'),
+       (3, 1, 'comment5');
+
+select setval(pg_get_serial_sequence('task_system.users', 'id'), coalesce(max(id), 1))
+from task_system.users;
+
+select setval(pg_get_serial_sequence('task_system.roles', 'id'), coalesce(max(id), 1))
+from task_system.roles;
+
+select setval(pg_get_serial_sequence('task_system.users_roles', 'id'), coalesce(max(id), 1))
+from task_system.users_roles;
+
+select setval(pg_get_serial_sequence('task_system.tasks', 'id'), coalesce(max(id), 1))
+from task_system.tasks;
+
+select setval(pg_get_serial_sequence('task_system.comments', 'id'), coalesce(max(id), 1))
+from task_system.comments;
