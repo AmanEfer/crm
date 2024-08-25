@@ -5,7 +5,6 @@ import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.task.TaskRequestDto;
 import com.amanefer.crm.dto.task.TaskResponseAsPage;
 import com.amanefer.crm.dto.task.TaskResponseDto;
-import com.amanefer.crm.dto.task.UpdateTaskDto;
 import com.amanefer.crm.services.comment.CommentServiceImpl;
 import com.amanefer.crm.services.task.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,7 +87,7 @@ public class TaskController {
     @PatchMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@AuthenticationPrincipal UserDetails user,
                                                       @PathVariable Integer id,
-                                                      @RequestBody UpdateTaskDto dto) {
+                                                      @RequestBody TaskRequestDto dto) {
 
         return new ResponseEntity<>(taskService.updateTask(id, user.getUsername(), dto), HttpStatus.OK);
     }

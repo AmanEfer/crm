@@ -3,7 +3,6 @@ package com.amanefer.crm.controllers;
 import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.user.RegisterUserDto;
 import com.amanefer.crm.dto.user.UpdateUserDto;
-import com.amanefer.crm.dto.user.UserBasicFieldsDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.services.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +31,7 @@ public class UserController {
 
     @Operation(summary = "Get all users")
     @GetMapping
-    public List<UserBasicFieldsDto> getAllUsers() {
+    public List<UserResponseDto> getAllUsers() {
 
         return userService.getAllUsers();
     }
@@ -54,7 +53,7 @@ public class UserController {
     @Operation(summary = "Create new user")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserBasicFieldsDto> createUser(@RequestBody RegisterUserDto dto) {
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody RegisterUserDto dto) {
 
         return new ResponseEntity<>(userService.createUser(dto), HttpStatus.CREATED);
     }

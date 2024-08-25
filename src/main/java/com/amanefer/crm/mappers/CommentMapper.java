@@ -14,5 +14,5 @@ import org.springframework.stereotype.Component;
 public interface CommentMapper extends BaseMapper<CreateCommentDto, CommentResponseDto, Comment> {
 
     @Mapping(source = "task.id", target = "taskId")
-    CommentResponseDto fromEntityToDto(Comment comment);
+    CommentResponseDto toDto(Comment comment);
 }

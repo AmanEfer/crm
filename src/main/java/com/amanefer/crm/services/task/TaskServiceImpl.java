@@ -4,7 +4,6 @@ import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.task.TaskRequestDto;
 import com.amanefer.crm.dto.task.TaskResponseAsPage;
 import com.amanefer.crm.dto.task.TaskResponseDto;
-import com.amanefer.crm.dto.task.UpdateTaskDto;
 import com.amanefer.crm.entities.Task;
 import com.amanefer.crm.entities.User;
 import com.amanefer.crm.exceptions.TaskForbiddenOperationException;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,23 +44,21 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseAsPage getAllUsersAllTasks(Pageable pageable) {
         Page<Task> tasksPage = taskRepository.findAll(pageable);
-        List<TaskResponseDto> content = getContent(tasksPage);
 
-        return convertToTaskResponseAsPage(tasksPage, content);
+        return taskMapper.fromPageToTaskResponseAsPage(tasksPage);
     }
 
     @Override
     public TaskResponseAsPage getCurrentUserAllTasks(Pageable pageable, String email) {
         Page<Task> tasksPage = taskRepository.getUserAllTasks(pageable, email);
-        List<TaskResponseDto> content = getContent(tasksPage);
 
-        return convertToTaskResponseAsPage(tasksPage, content);
+        return taskMapper.fromPageToTaskResponseAsPage(tasksPage);
     }
 
     @Override
     public TaskResponseDto getTaskById(Integer id) {
 
-        return taskMapper.fromEntityToDto(getTaskByIdAsEntity(id));
+        return taskMapper.toDto(getTaskByIdAsEntity(id));
     }
 
     @Override
@@ -75,17 +71,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseAsPage getTasksByAuthor(Pageable pageable, Integer authorId) {
         Page<Task> tasksPage = taskRepository.findByAuthor(pageable, authorId);
-        List<TaskResponseDto> content = getContent(tasksPage);
 
-        return convertToTaskResponseAsPage(tasksPage, content);
+        return taskMapper.fromPageToTaskResponseAsPage(tasksPage);
     }
 
     @Override
     public TaskResponseAsPage getTasksByAssignee(Pageable pageable, Integer assigneeId) {
         Page<Task> tasksPage = taskRepository.findByAssignee(pageable, assigneeId);
-        List<TaskResponseDto> content = getContent(tasksPage);
 
-        return convertToTaskResponseAsPage(tasksPage, content);
+        return taskMapper.fromPageToTaskResponseAsPage(tasksPage);
     }
 
     @Override
@@ -93,31 +87,33 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto createTask(TaskRequestDto dto, String email) {
         User user = getUser(email);
 
-        Task task = taskMapper.fromDtoToEntity(dto);
+        Task task = taskMapper.toEntity(dto);
         task.setAuthor(user);
         task.setAssignee(user);
         task.setComments(new ArrayList<>());
+        task.setStatus(TaskStatus.IN_WAITING);
+        task.setPriority(TaskPriority.MEDIUM);
 
         Task saved = taskRepository.save(task);
 
-        return convertToTaskResponseDto(saved);
+        return taskMapper.toDto(saved);
     }
 
     @Override
     @Transactional
-    public TaskResponseDto updateTask(Integer id, String email, UpdateTaskDto dto) {
+    public TaskResponseDto updateTask(Integer id, String email, TaskRequestDto dto) {
         Task task = getTaskByIdAsEntity(id);
 
         if (!task.getAssignee().getEmail().equals(email))
             throw new TaskForbiddenOperationException(UPDATE_NOT_ALLOWED_MESSAGE);
 
-        if (dto.getTitle() != null && !dto.getTitle().isBlank())
+        if (dto.getTitle() == null || dto.getTitle().isBlank())
             task.setTitle(dto.getTitle());
 
-        if (dto.getDescription() != null && !dto.getDescription().isBlank())
+        if (dto.getDescription() == null || dto.getDescription().isBlank())
             task.setDescription(dto.getDescription());
 
-        return convertToTaskResponseDto(task);
+        return taskMapper.toDto(task);
     }
 
     @Override
@@ -137,7 +133,7 @@ public class TaskServiceImpl implements TaskService {
 
         task.setStatus(TaskStatus.valueOf(status));
 
-        return convertToTaskResponseDto(task);
+        return taskMapper.toDto(task);
     }
 
     @Override
@@ -157,7 +153,7 @@ public class TaskServiceImpl implements TaskService {
 
         task.setPriority(TaskPriority.valueOf(priority));
 
-        return convertToTaskResponseDto(task);
+        return taskMapper.toDto(task);
     }
 
     @Override
@@ -170,7 +166,7 @@ public class TaskServiceImpl implements TaskService {
 
         task.setAssignee(userService.getUserByIdAsEntity(assigneeId));
 
-        return convertToTaskResponseDto(task);
+        return taskMapper.toDto(task);
     }
 
     @Override
@@ -190,30 +186,6 @@ public class TaskServiceImpl implements TaskService {
     private User getUser(String email) {
 
         return userService.getUserByEmailAsEntity(email);
-    }
-
-    private TaskResponseDto convertToTaskResponseDto(Task task) {
-        TaskResponseDto dto = taskMapper.fromEntityToDto(task);
-        dto.setAuthorId(task.getAuthor().getId());
-        dto.setAssigneeId(task.getAssignee().getId());
-
-        return dto;
-    }
-
-    private static TaskResponseAsPage convertToTaskResponseAsPage(Page<Task> tasksPage, List<TaskResponseDto> content) {
-
-        return TaskResponseAsPage.builder()
-                .tasks(content)
-                .pageNumber(tasksPage.getNumber())
-                .pagesCount(tasksPage.getTotalPages())
-                .build();
-    }
-
-    private List<TaskResponseDto> getContent(Page<Task> tasksPage) {
-
-        return tasksPage.getContent().stream()
-                .map(this::convertToTaskResponseDto)
-                .toList();
     }
 
 }

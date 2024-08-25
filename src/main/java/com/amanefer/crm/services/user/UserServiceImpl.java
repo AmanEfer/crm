@@ -3,7 +3,6 @@ package com.amanefer.crm.services.user;
 import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.user.RegisterUserDto;
 import com.amanefer.crm.dto.user.UpdateUserDto;
-import com.amanefer.crm.dto.user.UserBasicFieldsDto;
 import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.entities.Role;
 import com.amanefer.crm.entities.User;
@@ -41,15 +40,15 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public List<UserBasicFieldsDto> getAllUsers() {
+    public List<UserResponseDto> getAllUsers() {
 
-        return userMapper.fromEntityListToDtoList(userRepository.findAll());
+        return userMapper.toDtoList(userRepository.findAll());
     }
 
     @Override
     public UserResponseDto getUserById(Integer id) {
 
-        return userMapper.fromEntityToDto(findUserInDB(id));
+        return userMapper.toDto(findUserInDB(id));
     }
 
     @Override
@@ -62,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto getUserByEmail(String email) {
 
-        return userMapper.fromEntityToDto(getUserByEmailAsEntity(email));
+        return userMapper.toDto(getUserByEmailAsEntity(email));
     }
 
     @Override
@@ -82,8 +81,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserBasicFieldsDto createUser(RegisterUserDto dto) {
-        User user = userMapper.fromDtoToEntity(dto);
+    public UserResponseDto createUser(RegisterUserDto dto) {
+        User user = userMapper.toEntity(dto);
 
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserConflictException(ALREADY_EXISTS_MESSAGE);
@@ -97,7 +96,7 @@ public class UserServiceImpl implements UserService {
         user.setAuthoredTasks(new HashSet<>());
         user.setAssignedTasks(new HashSet<>());
 
-        return userMapper.fromUserToBasicFieldsDto(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
@@ -108,7 +107,7 @@ public class UserServiceImpl implements UserService {
         updatableUser.setName(dto.getName());
         updatableUser.setEmail(dto.getEmail());
 
-        return userMapper.fromEntityToDto(updatableUser);
+        return userMapper.toDto(updatableUser);
     }
 
     @Override

@@ -26,8 +26,8 @@ create table if not exists task_system.users_roles
 create table if not exists task_system.tasks
 (
     id          serial primary key,
-    title       varchar(255),
-    description text,
+    title       varchar(255) not null,
+    description text not null,
     status      varchar(20),
     priority    varchar(20),
     author_id   int references task_system.users (id) on delete set null,

@@ -31,7 +31,7 @@ public class CommentServiceImpl implements CommentService {
         User user = userService.getUserByEmailAsEntity(email);
         Task task = taskService.getTaskByIdAsEntity(id);
 
-        Comment comment = commentMapper.fromDtoToEntity(dto);
+        Comment comment = commentMapper.toEntity(dto);
         comment.setTask(task);
         comment.setAuthorId(user.getId());
 
@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
 
         task.getComments().add(savedComment);
 
-        return taskMapper.fromEntityToDto(task);
+        return taskMapper.toDto(task);
     }
 
 }

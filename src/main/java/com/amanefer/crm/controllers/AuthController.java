@@ -2,7 +2,7 @@ package com.amanefer.crm.controllers;
 
 import com.amanefer.crm.dto.user.LoginUserDto;
 import com.amanefer.crm.dto.user.RegisterUserDto;
-import com.amanefer.crm.dto.user.UserBasicFieldsDto;
+import com.amanefer.crm.dto.user.UserResponseDto;
 import com.amanefer.crm.services.auth.AuthenticationService;
 import com.amanefer.crm.services.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserBasicFieldsDto> registration(@RequestBody RegisterUserDto dto) {
+    public ResponseEntity<UserResponseDto> registration(@RequestBody RegisterUserDto dto) {
 
         return new ResponseEntity<>(userService.createUser(dto), HttpStatus.CREATED);
     }

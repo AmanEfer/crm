@@ -4,7 +4,6 @@ import com.amanefer.crm.dto.common.ResponseDto;
 import com.amanefer.crm.dto.task.TaskRequestDto;
 import com.amanefer.crm.dto.task.TaskResponseAsPage;
 import com.amanefer.crm.dto.task.TaskResponseDto;
-import com.amanefer.crm.dto.task.UpdateTaskDto;
 import com.amanefer.crm.entities.Task;
 import org.springframework.data.domain.Pageable;
 
@@ -24,7 +23,7 @@ public interface TaskService {
 
     TaskResponseDto createTask(TaskRequestDto dto, String email);
 
-    TaskResponseDto updateTask(Integer id, String email, UpdateTaskDto dto);
+    TaskResponseDto updateTask(Integer id, String email, TaskRequestDto dto);
 
     TaskResponseDto changeStatus(String email, Integer id, String status);
 

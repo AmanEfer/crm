@@ -2,7 +2,7 @@ package com.amanefer.crm.mappers;
 
 public interface BaseMapper<R, D, E> {
 
-    E fromDtoToEntity(R r);
+    E toEntity(R r);
 
-    D fromEntityToDto(E e);
+    D toDto(E e);
 }
